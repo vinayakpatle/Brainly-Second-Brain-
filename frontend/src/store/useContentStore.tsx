@@ -30,7 +30,7 @@ interface useContentStoreProps{
 
 }
 
-const useContentStore=create<useContentStoreProps>((set,get)=>({
+const useContentStore=create<useContentStoreProps>((set)=>({
     contents:[],
     isContentCreating: false,
     isContentFetching:false,
@@ -49,7 +49,7 @@ const useContentStore=create<useContentStoreProps>((set,get)=>({
             )
             set((state)=>({
                 ...state,
-                contents:[...state.contents,res.data],
+                contents:[...state.contents,res.data.content],
                 isAddContentOpen:!state.isAddContentOpen
             }))
             toast.success("Content created successfully");
@@ -67,7 +67,7 @@ const useContentStore=create<useContentStoreProps>((set,get)=>({
             const token=localStorage.getItem("token");
             const headers=token ? {Authorization:token} : {};
             const res=await axiosInstance.get("/content/get",{headers});
-            set({contents:res.data.content});
+            set({contents:res.data.contents});
         }catch(e: any){
             toast.error(e?.response?.data?.message);
         }finally{

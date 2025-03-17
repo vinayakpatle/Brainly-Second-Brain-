@@ -1,11 +1,13 @@
 import { Request, NextFunction,Response } from "express";
 import jwt from "jsonwebtoken";
-import pgClient from "../lib/db";
+import {PrismaClient} from "@prisma/client";
 import dotenv from "dotenv"
 dotenv.config();
 
+const client=new PrismaClient();
+
 interface decodedTokenType{
-    user_id: string
+    user_id: number
 }
 
 export const authMiddleware=async (req: Request,res: Response,next: NextFunction)=>{
@@ -24,9 +26,15 @@ export const authMiddleware=async (req: Request,res: Response,next: NextFunction
 
         const decodedToken=jwt.verify(token as string,JWT_SECRET) as decodedTokenType;
 
-        const findUserQuery="SELECT id,username,created_at FROM users WHERE id=$1";
-        const response=await pgClient.query(findUserQuery,[decodedToken.user_id]);
-        const user=response.rows[0];
+        const user=await client.users.findUnique({
+            where:{
+                id:decodedToken.user_id
+            },
+            select:{
+                id:true,
+                username:true
+            }
+        })
 
         if(!user){
             res.status(400).json({message:"User not found"});

@@ -1,7 +1,9 @@
 import {Request, Response} from "express";
-import pgClient from "../lib/db";
+import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import generateToken from "../lib/utils";
+
+const client=new PrismaClient();
 
 export const signup=async (req:Request, res:Response): Promise<void>=>{
     const username=req.body.username;
@@ -12,26 +14,30 @@ export const signup=async (req:Request, res:Response): Promise<void>=>{
             res.status(400).json({message:"please fill all fields"});
             return ;
         }
-
         if(password.length<6){
             res.status(411).json({message:"password must be at least 6 characaters"});
             return ;
         }
-
-        const isUserExistQuery="SELECT * FROM users WHERE username=$1";
-        const response=await pgClient.query(isUserExistQuery,[username]);
-        if(response.rows[0]){
+        const userExistAlready=await client.users.findUnique({
+            where:{
+                username:username
+            }
+        })
+        if(userExistAlready){
             res.status(403).json({message:"user already exist"});
             return ;
         }
 
         const saltRound=10;
         const hashedPassword=await bcrypt.hash(password,saltRound);
-        const createUserQuery="INSERT INTO users(username,password) VALUES($1,$2) RETURNING username,id,created_at";
-        const response2=await pgClient.query(createUserQuery,[username,hashedPassword])
-        const newUser=response2.rows[0];
+        const newUser=await client.users.create({
+            data:{
+                username:username,
+                password:hashedPassword
+            }
+        })
 
-        res.status(201).json({message:"user created successfully",user:newUser});
+        res.status(201).json({message:"user created successfully"});
         return ;
 
     }catch(e: any){
@@ -50,26 +56,30 @@ export const login =async(req:Request, res:Response): Promise<void>=>{
             res.status(400).json({message:"please fill all fields"});
             return ;
         }
+        const response=await client.users.findUnique({
+            where:{
+                username:username
+            }
+        })
 
-        const userExistQuery="SELECT * FROM users WHERE username=$1";
-        const response=await pgClient.query(userExistQuery,[username]);
-        const user=response.rows[0];
-
-        if(!user){
+        if(!response){
             res.status(403).json({message:"Invalid credentials"});
             return ;
         }
 
-        const isPasswordMatch=await bcrypt.compare(password,user.password);
+        const isPasswordMatch=await bcrypt.compare(password,response.password);
 
         if(!isPasswordMatch){
             res.status(400).json({message:"Invalid credentials"});
             return ;
         }
 
-        const token=generateToken(user.id);
+        const token=generateToken(response.id);
 
-        res.status(200).json({token:token});
+        res.status(200).json({token:token,user:{
+            id:response.id,
+            username:response.username
+        }});
         return ;
 
     }catch(e: any){

@@ -14,9 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authMiddleware = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const db_1 = __importDefault(require("../lib/db"));
+const client_1 = require("@prisma/client");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
+const client = new client_1.PrismaClient();
 const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const token = req.headers.authorization;
     //console.log("token",token);
@@ -29,9 +30,15 @@ const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
             throw new Error("JWT_SECRET is not defined");
         }
         const decodedToken = jsonwebtoken_1.default.verify(token, JWT_SECRET);
-        const findUserQuery = "SELECT id,username,created_at FROM users WHERE id=$1";
-        const response = yield db_1.default.query(findUserQuery, [decodedToken.user_id]);
-        const user = response.rows[0];
+        const user = yield client.users.findUnique({
+            where: {
+                id: decodedToken.user_id
+            },
+            select: {
+                id: true,
+                username: true
+            }
+        });
         if (!user) {
             res.status(400).json({ message: "User not found" });
         }

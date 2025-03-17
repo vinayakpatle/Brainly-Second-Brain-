@@ -22,9 +22,11 @@ const Button = ({variant,text,startIcon,onChange,fullWidth,loading}: ButtonProps
   return (
     <button disabled={loading} onClick={onChange} className={`${variantClasses[variant]} ${defaultStyles} flex justify-center ${fullWidth ? "w-full " : ""} ${loading ? "opacity-60" : ""} `}>
       {startIcon && <span className='size-4 flex items-center'>{startIcon}</span>}
-      {loading ? <Loader className="animate-spin" /> : <span className={`${text==="Submit" || "Signup" || "Signin" ? "block" :" hidden md:block"}  transition-all duration-200`}>{text}</span>}
+      {loading ? <Loader className="animate-spin" /> : <span className={`${text==="Share" || text==="Add content" ? "hidden md:block" : "block"} transition-all duration-200`}>{text}</span>}
     </button>
   )
 }
+
+{/* text==="Submit" || "Signup" || "Signin" ? "block" : */}
 
 export default Button

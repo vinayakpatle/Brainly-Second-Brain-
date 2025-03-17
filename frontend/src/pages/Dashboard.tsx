@@ -37,12 +37,6 @@ function Dashboard() {
           </div>
           <div className='p-4 pt-4 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3'>
             <h1 className='text-4xl text-gray-800 font-semibold'>Content is loading</h1>
-            {/*<span>
-              <Card title="AI for any app" type="youtube" link="https://www.youtube.com/watch?v=4JdUPCT37fI" />
-            </span>
-            <span>
-              <Card title="harkirat first post" type="twitter" link="https://x.com/kirat_tw/status/1633685473821425666" />
-            </span>*/}
           </div>
         </div>
       </div>

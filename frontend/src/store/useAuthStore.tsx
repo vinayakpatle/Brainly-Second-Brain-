@@ -8,11 +8,17 @@ interface DataType{
 }
 
 type useAuthStoreProps={
-    authUser: DataType | null;
+    authUser: authUserType | null;
     isSigningUp:boolean;
     isLoggingUp:boolean;
-    signup:(Data: DataType,navigate:(path: string)=>void)=> Promise<void>;
-    signin:(Data: DataType,navigate:(path: string)=>void)=> Promise<void>;
+    signup:(Data: DataType,navigate:(path: string)=>void)=> void;
+    signin:(Data: DataType,navigate:(path: string)=>void)=> void;
+    logout:(navigate:(path: string)=>void)=> void;
+}
+
+interface authUserType{
+    id: Number;
+    username: String;
 }
 
 const useAuthStore=create<useAuthStoreProps>((set)=>({
@@ -23,12 +29,11 @@ const useAuthStore=create<useAuthStoreProps>((set)=>({
     signup:async(Data: DataType,navigate)=>{
         set({isSigningUp:true});
         try{
-            const res=await axiosInstance.post("/auth/signup",Data);
-            set({authUser:res.data});
+            await axiosInstance.post("/auth/signup",Data);
             toast.success("Account created successfully");
             navigate("/login");
         }catch(e: any){
-            toast.error(e.response?.data?.message);
+            toast.error(e?.response?.data?.message);
         }finally{
             set({isSigningUp:false});
         }
@@ -39,13 +44,24 @@ const useAuthStore=create<useAuthStoreProps>((set)=>({
         try{
             const res=await axiosInstance.post("/auth/login",Data);
             const jwt=res.data.token;
+            set({authUser:res.data.user});
             localStorage.setItem("token",jwt);
             toast.success("Logged in successfully");
             navigate("/dashboard");
         }catch(e: any){
-            toast.error(e.response?.data?.message);
+            toast.error(e?.response?.data?.message);
         }finally{
             set({isLoggingUp:false});
+        }
+    },
+
+    logout:(navigate)=>{
+        try{
+            localStorage.removeItem("token");
+            set({authUser:null});
+            navigate("/login");
+        }catch(e: any){
+            toast.error(e?.response?.data?.message);
         }
     }
 
