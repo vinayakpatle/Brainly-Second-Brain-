@@ -11,9 +11,11 @@ type useAuthStoreProps={
     authUser: authUserType | null;
     isSigningUp:boolean;
     isLoggingUp:boolean;
+    isAuthChecking:boolean;
     signup:(Data: DataType,navigate:(path: string)=>void)=> void;
     signin:(Data: DataType,navigate:(path: string)=>void)=> void;
     logout:(navigate:(path: string)=>void)=> void;
+    authCheck:()=>void;
 }
 
 interface authUserType{
@@ -21,10 +23,11 @@ interface authUserType{
     username: String;
 }
 
-const useAuthStore=create<useAuthStoreProps>((set)=>({
+const useAuthStore=create<useAuthStoreProps>((set,get)=>({
     authUser: null,
     isSigningUp:false,
     isLoggingUp:false,
+    isAuthChecking:true,
 
     signup:async(Data: DataType,navigate)=>{
         set({isSigningUp:true});
@@ -62,6 +65,20 @@ const useAuthStore=create<useAuthStoreProps>((set)=>({
             navigate("/login");
         }catch(e: any){
             toast.error(e?.response?.data?.message);
+        }
+    },
+
+    authCheck:async()=>{
+        try{
+            const token=localStorage.getItem("token");
+            const headers=token ? {Authorization:token} : {};
+            const res=await axiosInstance.get("/auth/check",{headers});
+            set({authUser:res.data.user});
+        }catch(e: any){
+            //toast.error(e?.response?.data?.message);
+            set({authUser:null});
+        }finally{
+            set({isAuthChecking:false});
         }
     }
 

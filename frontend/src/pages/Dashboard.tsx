@@ -5,6 +5,7 @@ import Sidebar from "../component/Sidebar";
 import CreateContentModel from "../component/CreateContentModel";
 import { Plus,Share } from "lucide-react";
 import useContentStore from "../store/useContentStore";
+import useAuthStore from "../store/useAuthStore";
 
 
 

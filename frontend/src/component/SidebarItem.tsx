@@ -1,14 +1,22 @@
 import {ReactElement} from "react";
+import useContentStore from "../store/useContentStore";
 
 interface SidebarItemProps{
-  text: string;
+  fetchTypeContent:(type: "YouTube" | "Twitter")=>void;
+  text: "YouTube" | "Twitter";
   icon: ReactElement;
 }
 
-const SidebarItem = ({text,icon}: SidebarItemProps) => {
+const SidebarItem = ({fetchTypeContent,text,icon}: SidebarItemProps) => {
+  const {typeOfContent}=useContentStore();
+
+  function handleTypeContent(){
+    useContentStore.setState({typeOfContent:text});
+    fetchTypeContent(text);
+  }
 
   return (
-    <div className="flex gap-2 items-center text-gray-700 cursor-pointer hover:bg-gray-300 rounded pl-4 py-2 transition-all duration-200">
+    <div onClick={handleTypeContent} className={`${typeOfContent===text ? "bg-gray-300" : ""} flex gap-2 items-center text-gray-700 cursor-pointer hover:bg-gray-300 rounded pl-4 py-2 transition-all duration-200`}>
       <span>
         {icon} 
       </span>

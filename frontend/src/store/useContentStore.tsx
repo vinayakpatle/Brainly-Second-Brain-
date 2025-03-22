@@ -20,18 +20,21 @@ interface contentCreatingType{
 
 interface useContentStoreProps{
     contents: contentType[];
+    typeOfContent:null | "YouTube" | "Twitter";
     isContentCreating: boolean;
     isContentFetching: boolean;
     isAddContentOpen: boolean;
     createContent: (content: contentCreatingType)=>void;
     fetchContent:()=>void;
+    fetchTypeContent:(type: "YouTube" | "Twitter")=>void;
     deleteContent:(content_id: number)=>void;
     toggleAddContent:()=>void;
 
 }
 
-const useContentStore=create<useContentStoreProps>((set)=>({
+const useContentStore=create<useContentStoreProps>((set,get)=>({
     contents:[],
+    typeOfContent:null,
     isContentCreating: false,
     isContentFetching:false,
     isAddContentOpen:false,
@@ -47,11 +50,20 @@ const useContentStore=create<useContentStoreProps>((set)=>({
                     }
                 }
             )
-            set((state)=>({
-                ...state,
-                contents:[...state.contents,res.data.content],
-                isAddContentOpen:!state.isAddContentOpen
-            }))
+            if(get().typeOfContent){
+                if(get().typeOfContent===res.data.content.type){
+                    set((state)=>({
+                        ...state,
+                        contents:[...state.contents,res.data.content]
+                    }))
+                }
+            }else{
+                set((state)=>({
+                    ...state,
+                    contents:[...state.contents,res.data.content]
+                }))
+            }
+            set((state)=>({isAddContentOpen:!state.isAddContentOpen}));
             toast.success("Content created successfully");
 
         }catch(e: any){
@@ -72,6 +84,22 @@ const useContentStore=create<useContentStoreProps>((set)=>({
             toast.error(e?.response?.data?.message);
         }finally{
             set({isContentFetching:false});
+        }
+    },
+
+    fetchTypeContent:async(type: "YouTube" | "Twitter")=>{
+
+        set({isContentFetching:true});
+        try{
+            const token=localStorage.getItem("token");
+            const headers=token ? {Authorization:token} : {};
+            const typeContents=await axiosInstance.get(`/content/get/${type}`,{headers});
+            set({contents:typeContents.data.contents});
+
+        }catch(e: any){
+            toast.error(e?.response?.data?.message);
+        }finally{
+            set({isContentFetching:false})
         }
     },
 

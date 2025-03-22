@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logout = exports.login = exports.signup = void 0;
+exports.authCheck = exports.login = exports.signup = void 0;
 const client_1 = require("@prisma/client");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const utils_1 = __importDefault(require("../lib/utils"));
@@ -92,6 +92,14 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
-const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-});
-exports.logout = logout;
+const authCheck = (req, res) => {
+    try {
+        const user = req.user;
+        res.status(200).json({ user: user });
+    }
+    catch (e) {
+        console.log("Error in authCheck ", e.message);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+exports.authCheck = authCheck;

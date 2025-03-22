@@ -10,6 +10,7 @@ const contentController_1 = require("../controllers/contentController");
 router.post("/create", authMiddleware_1.authMiddleware, contentController_1.createContent);
 router.get("/get", authMiddleware_1.authMiddleware, contentController_1.getContent);
 router.delete("/delete/:id", authMiddleware_1.authMiddleware, contentController_1.deleteContent);
+router.get("/get/:type", authMiddleware_1.authMiddleware, contentController_1.getSpecificContent);
 router.post("/share", authMiddleware_1.authMiddleware, contentController_1.share);
 router.get("/:shareLink", contentController_1.shareLink);
 exports.default = router;

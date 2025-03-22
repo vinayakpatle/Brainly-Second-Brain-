@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.shareLink = exports.share = exports.deleteContent = exports.getContent = exports.createContent = void 0;
+exports.shareLink = exports.share = exports.getSpecificContent = exports.deleteContent = exports.getContent = exports.createContent = void 0;
 const client_1 = require("@prisma/client");
 const random_1 = __importDefault(require("../lib/random"));
 const client = new client_1.PrismaClient();
@@ -100,6 +100,31 @@ const deleteContent = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.deleteContent = deleteContent;
+const getSpecificContent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const type = req.params.type;
+    const user_id = req.user.id;
+    try {
+        const specificContents = yield client.content.findMany(({
+            where: {
+                user_id: user_id,
+                type: type
+            }, select: {
+                id: true,
+                user_id: true,
+                title: true,
+                link: true,
+                type: true,
+                created_at: true
+            }
+        }));
+        res.status(200).json({ contents: specificContents });
+    }
+    catch (e) {
+        console.log("Error in getSpecificContent", e.message);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+exports.getSpecificContent = getSpecificContent;
 const share = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {

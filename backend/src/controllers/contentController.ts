@@ -97,6 +97,32 @@ export const deleteContent=async(req:Request, res:Response): Promise<void>=>{
 
 }
 
+export const getSpecificContent=async(req: Request, res: Response): Promise<void>=>{
+    const type=req.params.type;
+    const user_id=(req as any).user.id;
+    try{
+        const specificContents=await client.content.findMany(({
+            where:{
+                user_id:user_id,
+                type:type
+            },select:{
+                id:true,
+                user_id:true,
+                title:true,
+                link:true,
+                type:true,
+                created_at:true
+            }
+        }))
+
+        res.status(200).json({contents:specificContents});
+
+    }catch(e: any){
+        console.log("Error in getSpecificContent",e.message);
+        res.status(500).json({message:"Internal server error"});
+    }
+}
+
 export const share=async(req: Request, res: Response): Promise<void>=>{
 
     try{

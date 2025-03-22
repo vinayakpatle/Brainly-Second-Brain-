@@ -89,6 +89,13 @@ export const login =async(req:Request, res:Response): Promise<void>=>{
     }
 }
 
-export const logout=async(req:Request, res:Response)=>{
-
+export const authCheck=(req:Request, res:Response): void=>{
+    try{
+        const user=(req as any).user;
+        res.status(200).json({user:user});
+            
+    }catch(e: any){
+        console.log("Error in authCheck ",e.message);
+        res.status(500).json({message:"Internal server error"});
+    }
 }

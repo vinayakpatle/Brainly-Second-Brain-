@@ -42,13 +42,13 @@ const Signup = () => {
 
   return (
     <div  className='w-screen h-screen bg-gray-300 flex justify-center items-center'>
-        <div className='min-w-48 bg-white p-8 flex-col space-y-4 rounded-lg'>
-            <Input ref={usernameRef} onChange={usernameOnChange} type="text" placeholder="Username" />
-            <Input ref={passwordRef} onChange={passwordOnChange} type="password" placeholder="Password" />
-            <div className='flex justify-center'>
-                <Button onChange={signupHandler} loading={isSigningUp} text="Signup" variant="primary" fullWidth={true} />
-            </div>
-        </div>
+      <div className='min-w-48 bg-white p-8 flex-col space-y-4 rounded-lg'>
+          <Input ref={usernameRef} onChange={usernameOnChange} type="text" placeholder="Username" />
+          <Input ref={passwordRef} onChange={passwordOnChange} type="password" placeholder="Password" />
+          <div className='flex justify-center'>
+              <Button onChange={signupHandler} loading={isSigningUp} text="Signup" variant="primary" fullWidth={true} />
+          </div>
+      </div>
     </div>
   )
 }
