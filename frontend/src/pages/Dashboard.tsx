@@ -58,7 +58,7 @@ function Dashboard() {
               </div>
             </div>
           </div>
-          <div className='p-4 pt-4 max-h-screen h-auto overflow-y-scroll grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3'>
+          <div className='p-4 max-h-screen h-auto overflow-y-scroll grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
             {contents.map((content,idx)=>(
                 <span key={idx}>
                   <Card 

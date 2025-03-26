@@ -11,7 +11,7 @@ interface CardProps {
 const Card = ({ title, link, type,deleteContent,content_id}: CardProps) => {
 
   return (
-    <div className='bg-white p-4 rounded-md border border-gray-300 min-w-full sm:min-w-72 max-w-full sm:max-w-72 min-h-56'>
+    <div className='bg-white p-4 rounded-md border border-gray-300 min-w-full sm:min-w-72 max-w-full sm:max-w-72 min-h-56 shadow-md hover:shadow-2xl hover:scale-105 transition-transform transform duration-200 ease-in-out'>
       <div className='flex justify-between items-center text-md'>
         <div className='flex gap-2 items-center'>
           {type === "YouTube" ? <Youtube className='size-4 text-gray-500' /> : <Twitter className='size-4 text-gray-500' />}
